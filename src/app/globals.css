@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { background: #EEF0F6; min-height: 100vh; }
+}
+
+@layer components {
+  .inp {
+    @apply w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-sm
+           text-gray-900 placeholder-gray-300 outline-none transition-all
+           focus:border-brand focus:ring-2 focus:ring-brand/10;
+  }
+  .lbl {
+    @apply block text-[10px] font-semibold tracking-widest uppercase text-gray-400 mb-1.5;
+  }
+  .btn-brand {
+    @apply flex items-center justify-center gap-2 px-5 py-2.5 bg-brand hover:bg-brand-light
+           text-white text-sm font-medium rounded-lg transition-colors cursor-pointer
+           disabled:opacity-40 disabled:cursor-not-allowed select-none;
+  }
+  .btn-ghost {
+    @apply flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-500
+           text-sm rounded-lg hover:bg-gray-50 transition-colors cursor-pointer;
+  }
+  .card { @apply bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm; }
+  .card-head {
+    @apply flex items-center gap-3 px-5 py-4 border-b border-gray-100;
+  }
+  .c-icon {
+    @apply w-8 h-8 bg-brand rounded-lg flex items-center justify-center flex-shrink-0;
+  }
+  .upload-area {
+    @apply border-2 border-dashed border-gray-200 rounded-xl p-4 text-center cursor-pointer
+           hover:border-brand/40 hover:bg-gray-50 transition-all duration-150;
+  }
+  .upload-area.filled { @apply border-green-300 bg-green-50; }
+  .err { @apply text-[11px] text-red-500 mt-1; }
+}
