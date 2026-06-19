@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react'
 import { Upload, CheckCircle, X, Loader2 } from 'lucide-react'
 import clsx from 'clsx'
+import { useUploadThing } from '@/lib/uploadthing-client'
 
 interface Props {
   label: string
@@ -12,30 +13,29 @@ interface Props {
 
 export default function FileUpload({ label, hint, value, onChange }: Props) {
   const ref = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
   const [drag, setDrag] = useState(false)
   const [fileName, setFileName] = useState('')
 
+  const { startUpload, isUploading } = useUploadThing('idDocument', {
+    onClientUploadComplete: (res) => {
+      const url = res?.[0]?.url
+      if (url) onChange(url)
+      else {
+        alert('Upload failed — no file URL returned. Please try again.')
+        setFileName('')
+      }
+    },
+    onUploadError: (err) => {
+      console.error('Uploadthing error:', err)
+      alert(`Upload failed: ${err.message}`)
+      setFileName('')
+    },
+  })
+
   const handleFile = async (file: File) => {
     if (file.size > 4 * 1024 * 1024) { alert('File too large — max 4 MB'); return }
-    setUploading(true)
     setFileName(file.name)
-    try {
-      const fd = new FormData()
-      fd.append('files', file)
-      // Uploadthing presigned upload
-      const res = await fetch('/api/uploadthing', { method: 'POST', body: fd })
-      const json = await res.json()
-      const url  = json?.[0]?.url || json?.data?.[0]?.url || ''
-      if (url) onChange(url)
-      else throw new Error('No URL returned')
-    } catch (e) {
-      console.error(e)
-      alert('Upload failed — please try again')
-      setFileName('')
-    } finally {
-      setUploading(false)
-    }
+    await startUpload([file])
   }
 
   return (
@@ -46,17 +46,17 @@ export default function FileUpload({ label, hint, value, onChange }: Props) {
         onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])}
       />
       <div
-        onClick={() => !value && !uploading && ref.current?.click()}
+        onClick={() => !value && !isUploading && ref.current?.click()}
         onDragOver={e  => { e.preventDefault(); setDrag(true) }}
         onDragLeave={()  => setDrag(false)}
         onDrop={e => { e.preventDefault(); setDrag(false); e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]) }}
         className={clsx('upload-area', {
           'filled':                !!value,
           'border-brand/50 bg-brand/[0.02]': drag,
-          'cursor-wait':           uploading,
+          'cursor-wait':           isUploading,
         })}
       >
-        {uploading ? (
+        {isUploading ? (
           <div className="py-2 flex flex-col items-center gap-2">
             <Loader2 size={20} className="text-brand animate-spin" />
             <p className="text-xs text-gray-400">Uploading {fileName}…</p>
