@@ -13,6 +13,10 @@ export const idTypeEnum = pgEnum('id_type', [
   'aadhaar', 'passport', 'driving_licence', 'voter_id', 'pan',
 ])
 
+export const bookingSourceEnum = pgEnum('booking_source', [
+  'airbnb', 'booking_com', 'makemytrip', 'goibibo', 'oyo', 'direct', 'other',
+])
+
 // ── checkins ─────────────────────────────────────────────────
 export const checkins = pgTable('checkins', {
   id:              uuid('id').primaryKey().defaultRandom(),
@@ -26,7 +30,8 @@ export const checkins = pgTable('checkins', {
   // Stay
   checkinDate:     date('checkin_date').notNull(),
   checkoutDate:    date('checkout_date').notNull(),
-  airbnbBookingId: text('airbnb_booking_id').notNull(),
+  bookingSource:   bookingSourceEnum('booking_source').notNull().default('airbnb'),
+  bookingId:       text('booking_id').notNull(),
   purposeOfVisit:  text('purpose_of_visit'),
   guestCount:      integer('guest_count').notNull().default(1),
   specialRequests: text('special_requests'),

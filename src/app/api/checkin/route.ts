@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { checkins, guestIds } from '@/lib/schema'
 import { sendOwnerNotification, sendGuestConfirmation } from '@/lib/email'
+import { sendWhatsAppConfirmation } from '@/lib/whatsapp'
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,7 +18,8 @@ export async function POST(req: NextRequest) {
       state:           body.state || null,
       checkinDate:     body.checkinDate,
       checkoutDate:    body.checkoutDate,
-      airbnbBookingId: body.airbnbBookingId,
+      bookingSource:   body.bookingSource || 'airbnb',
+      bookingId:       body.bookingId || '',
       purposeOfVisit:  body.purposeOfVisit || null,
       guestCount:      body.guestCount,
       specialRequests: body.specialRequests || null,
@@ -40,11 +42,26 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Send emails — non-blocking, failure doesn't break submission
-    Promise.all([
-      sendOwnerNotification(body, checkin.id),
-      sendGuestConfirmation(body),
-    ]).catch(e => console.warn('Email error (non-fatal):', e))
+    // Notify owner by email — non-blocking, failure doesn't break submission
+    sendOwnerNotification(body, checkin.id)
+      .catch(e => console.warn('Owner email error (non-fatal):', e))
+
+    // Confirm to guest on BOTH email and WhatsApp — sent independently so
+    // one channel failing never blocks the other or the check-in itself
+    sendGuestConfirmation(body)
+      .catch(e => console.warn('Guest email error (non-fatal):', e))
+
+    sendWhatsAppConfirmation({
+      firstName:    body.firstName,
+      phone:        body.phone,
+      checkinDate:  body.checkinDate,
+      checkoutDate: body.checkoutDate,
+      guestCount:   body.guestCount,
+      bookingId:    body.bookingId,
+      propertyName: process.env.NEXT_PUBLIC_PROPERTY_NAME || 'Staycation21',
+    }).then(result => {
+      if (!result.ok) console.warn('WhatsApp confirmation not sent (non-fatal):', result.error)
+    })
 
     return NextResponse.json({ success: true, id: checkin.id })
   } catch (err: any) {

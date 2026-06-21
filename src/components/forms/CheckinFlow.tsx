@@ -17,7 +17,8 @@ interface CheckinFormValues {
   state?: string
   checkinDate: string
   checkoutDate: string
-  airbnbBookingId: string
+  bookingSource: string
+  bookingId: string
   purposeOfVisit?: string
   guestCount: number
   specialRequests?: string
@@ -32,7 +33,7 @@ export default function CheckinFlow() {
   const {
     register, watch, setValue, getValues, trigger,
     formState: { errors },
-  } = useForm<CheckinFormValues>({ defaultValues: { guestCount: 2 } })
+  } = useForm<CheckinFormValues>({ defaultValues: { guestCount: 2, bookingSource: 'airbnb' } })
 
   const next = async (fields: (keyof CheckinFormValues)[]) => {
     const ok = await trigger(fields)
@@ -73,7 +74,7 @@ export default function CheckinFlow() {
         )}
         {step === 1 && (
           <Step2Stay register={register} errors={errors} watch={watch} setValue={setValue}
-            onNext={() => next(['checkinDate', 'checkoutDate', 'airbnbBookingId'])} />
+            onNext={() => next(['checkinDate', 'checkoutDate', 'bookingSource', 'bookingId'])} />
         )}
         {step === 2 && (
           <Step3Guests

@@ -1,6 +1,6 @@
 'use client'
 import { ArrowRight, Calendar, Minus, Plus } from 'lucide-react'
-import { PURPOSE_OPTIONS } from '@/types'
+import { PURPOSE_OPTIONS, BOOKING_SOURCE_OPTIONS, BookingSource } from '@/types'
 
 interface Props {
   register: any; errors: any; watch: any; setValue: any; onNext: () => void
@@ -8,6 +8,10 @@ interface Props {
 
 export default function Step2Stay({ register, errors, watch, setValue, onNext }: Props) {
   const guestCount = watch('guestCount') || 1
+  const bookingSource: BookingSource = watch('bookingSource') || 'airbnb'
+  const sourceConfig = BOOKING_SOURCE_OPTIONS.find(o => o.value === bookingSource) || BOOKING_SOURCE_OPTIONS[0]
+  const idRequired = bookingSource !== 'direct'
+
   return (
     <div className="card">
       <div className="card-head">
@@ -31,12 +35,34 @@ export default function Step2Stay({ register, errors, watch, setValue, onNext }:
             {errors.checkoutDate && <p className="err">{errors.checkoutDate.message as string}</p>}
           </div>
         </div>
+
+        {/* Where did you book? */}
         <div>
-          <label className="lbl">Airbnb booking ID <span className="text-red-400 normal-case font-normal">*</span></label>
-          <input {...register('airbnbBookingId', { required: 'Required' })} className="inp font-mono tracking-wide" placeholder="HM1234XYZ789" />
-          <p className="text-[10px] text-gray-400 mt-1">Found in your Airbnb confirmation email</p>
-          {errors.airbnbBookingId && <p className="err">{errors.airbnbBookingId.message as string}</p>}
+          <label className="lbl">Where did you book? <span className="text-red-400 normal-case font-normal">*</span></label>
+          <select {...register('bookingSource', { required: 'Required' })} className="inp" defaultValue="airbnb">
+            {BOOKING_SOURCE_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
         </div>
+
+        <div>
+          <label className="lbl">
+            {sourceConfig.idLabel} {idRequired && <span className="text-red-400 normal-case font-normal">*</span>}
+          </label>
+          <input
+            {...register('bookingId', { required: idRequired ? 'Required' : false })}
+            className="inp font-mono tracking-wide"
+            placeholder={sourceConfig.placeholder}
+          />
+          <p className="text-[10px] text-gray-400 mt-1">
+            {bookingSource === 'direct'
+              ? 'Optional — leave blank if you booked directly with us'
+              : `Found in your ${sourceConfig.label} confirmation email`}
+          </p>
+          {errors.bookingId && <p className="err">{errors.bookingId.message as string}</p>}
+        </div>
+
         <div>
           <label className="lbl">Purpose of visit</label>
           <select {...register('purposeOfVisit')} className="inp">

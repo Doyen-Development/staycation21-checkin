@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { getAdminToken, clearAdminToken } from '@/lib/auth'
 import { toCSV, downloadCSV } from '@/lib/csv'
-import { STATUS_CONFIG, ID_LABELS, CheckinStatus } from '@/types'
+import { STATUS_CONFIG, ID_LABELS, CheckinStatus, BOOKING_SOURCE_LABELS, BookingSource } from '@/types'
 import { format } from 'date-fns'
 import clsx from 'clsx'
 import {
@@ -163,7 +163,12 @@ export default function AdminDashboard() {
                       <p className="text-[11px] text-gray-400">{row.email}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="font-mono text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{row.airbnbBookingId}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[9px] font-semibold uppercase tracking-wide text-gray-400 bg-gray-50 border border-gray-100 px-1.5 py-0.5 rounded">
+                          {BOOKING_SOURCE_LABELS[row.bookingSource as BookingSource] || 'Airbnb'}
+                        </span>
+                      </div>
+                      <span className="font-mono text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded mt-1 inline-block">{row.bookingId || '—'}</span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.checkinDate}</td>
                     <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{row.checkoutDate}</td>
@@ -206,7 +211,9 @@ export default function AdminDashboard() {
             <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between z-10">
               <div>
                 <p className="font-semibold text-gray-900">{sel.firstName} {sel.lastName}</p>
-                <p className="text-[11px] text-gray-400 mt-0.5 font-mono">{sel.airbnbBookingId}</p>
+                <p className="text-[11px] text-gray-400 mt-0.5 font-mono">
+                  {BOOKING_SOURCE_LABELS[sel.bookingSource as BookingSource] || 'Airbnb'} · {sel.bookingId || '—'}
+                </p>
               </div>
               <button onClick={() => setSel(null)}
                 className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">

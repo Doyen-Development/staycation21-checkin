@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
         ilike(checkins.firstName,       `%${search}%`),
         ilike(checkins.lastName,        `%${search}%`),
         ilike(checkins.email,           `%${search}%`),
-        ilike(checkins.airbnbBookingId, `%${search}%`),
+        ilike(checkins.bookingId,       `%${search}%`),
         ilike(checkins.phone,           `%${search}%`),
       )
     )

@@ -1,5 +1,21 @@
 export type IdType = 'aadhaar' | 'passport' | 'driving_licence' | 'voter_id' | 'pan'
 export type CheckinStatus = 'pending' | 'verified' | 'checked_in' | 'checked_out'
+export type BookingSource = 'airbnb' | 'booking_com' | 'makemytrip' | 'goibibo' | 'oyo' | 'direct' | 'other'
+
+export const BOOKING_SOURCE_OPTIONS: { value: BookingSource; label: string; idLabel: string; placeholder: string }[] = [
+  { value: 'airbnb',      label: 'Airbnb',         idLabel: 'Airbnb booking ID',       placeholder: 'HM1234XYZ789' },
+  { value: 'booking_com', label: 'Booking.com',    idLabel: 'Booking.com confirmation No.', placeholder: '1234567890' },
+  { value: 'makemytrip',  label: 'MakeMyTrip',     idLabel: 'MakeMyTrip booking ID',   placeholder: 'NH12345678' },
+  { value: 'goibibo',     label: 'Goibibo',        idLabel: 'Goibibo booking ID',      placeholder: 'GO1234567' },
+  { value: 'oyo',         label: 'OYO',            idLabel: 'OYO booking ID',          placeholder: 'OYO1234567' },
+  { value: 'direct',      label: 'Direct / Walk-in', idLabel: 'Reference / phone number', placeholder: 'Optional' },
+  { value: 'other',       label: 'Other',          idLabel: 'Booking reference',       placeholder: 'Enter reference' },
+]
+
+export const BOOKING_SOURCE_LABELS: Record<BookingSource, string> = {
+  airbnb: 'Airbnb', booking_com: 'Booking.com', makemytrip: 'MakeMyTrip',
+  goibibo: 'Goibibo', oyo: 'OYO', direct: 'Direct / Walk-in', other: 'Other',
+}
 
 export const ID_OPTIONS = [
   { value: 'aadhaar'         as IdType, label: 'Aadhaar Card',    hasBack: true,  numLabel: 'Aadhaar number',   placeholder: 'XXXX XXXX XXXX' },

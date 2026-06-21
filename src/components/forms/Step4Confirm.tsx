@@ -1,12 +1,13 @@
 'use client'
 import { useState } from 'react'
 import { CheckCircle, Send, Shield, FileText, Users, EyeOff } from 'lucide-react'
-import { ID_LABELS } from '@/types'
+import { ID_LABELS, BOOKING_SOURCE_LABELS, BookingSource } from '@/types'
 import clsx from 'clsx'
 
 export default function Step4Confirm({ data, onSubmit, loading }: { data: any; onSubmit: () => void; loading: boolean }) {
   const [agreed, setAgreed] = useState({ a: false, b: false, c: false })
   const allAgreed = agreed.a && agreed.b && agreed.c
+  const sourceLabel = data.bookingSource ? BOOKING_SOURCE_LABELS[data.bookingSource as BookingSource] : ''
 
   return (
     <div className="card">
@@ -25,7 +26,7 @@ export default function Step4Confirm({ data, onSubmit, loading }: { data: any; o
           {[
             { lbl: 'Guest',    v1: `${data.firstName} ${data.lastName}`, v2: data.email },
             { lbl: 'Dates',    v1: data.checkinDate,                      v2: `to ${data.checkoutDate}` },
-            { lbl: 'Booking',  v1: data.airbnbBookingId,                  v2: `${data.guestCount} guest${data.guestCount > 1 ? 's' : ''}` },
+            { lbl: sourceLabel || 'Booking', v1: data.bookingId || '—',   v2: `${data.guestCount} guest${data.guestCount > 1 ? 's' : ''}` },
           ].map(({ lbl, v1, v2 }) => (
             <div key={lbl} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
               <p className="text-[9px] text-gray-400 uppercase tracking-widest font-semibold mb-1">{lbl}</p>

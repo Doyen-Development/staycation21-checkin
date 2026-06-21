@@ -8,7 +8,7 @@ export const ourFileRouter = {
     pdf:   { maxFileSize: '4MB', maxFileCount: 1 },
   })
     .middleware(async () => {
-      // No auth needed on the form — anyone with the link can upload
+      // No auth needed on the form — anyone with the check-in link can upload
       // Files are private by default in Uploadthing
       return {}
     })

@@ -2,7 +2,7 @@ export function toCSV(rows: any[]): string {
   const headers = [
     'ID','Status','Submitted At',
     'First Name','Last Name','Email','Phone','City','State',
-    'Check-in','Check-out','Booking ID','Purpose','Guests','Special Requests',
+    'Check-in','Check-out','Booking Source','Booking ID','Purpose','Guests','Special Requests',
     'G1 Name','G1 ID Type','G1 ID Number',
     'G2 Name','G2 ID Type','G2 ID Number',
     'G3 Name','G3 ID Type','G3 ID Number',
@@ -14,7 +14,7 @@ export function toCSV(rows: any[]): string {
     const base = [
       r.id, r.status, r.submittedAt,
       r.firstName, r.lastName, r.email, r.phone, r.city || '', r.state || '',
-      r.checkinDate, r.checkoutDate, r.airbnbBookingId,
+      r.checkinDate, r.checkoutDate, r.bookingSource || 'airbnb', r.bookingId || '',
       r.purposeOfVisit || '', r.guestCount, r.specialRequests || '',
     ]
     const guests = r.guestIds || []
